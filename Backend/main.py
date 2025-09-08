@@ -21,8 +21,8 @@ from supabase import create_client, Client
 userCacheLine = TTLCache(maxsize=100, ttl=300)  # tigher bounds on on ttl
 
 # Supabase initial
-url: str = ""
-key: str = ""
+url: str = "https://yzpyartgzbqngicfpjgd.supabase.co/"
+key: str = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl6cHlhcnRnemJxbmdpY2ZwamdkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTcxMTYzNzEsImV4cCI6MjA3MjY5MjM3MX0.Eg8lHbid-tZYi9uyknTMlngBKhLjg9_CzLxrUT9unVI"
 supabase: Client = create_client(url, key)
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/sign-in")
 
@@ -38,16 +38,23 @@ app.add_middleware(
 
 # ===== Class Models
 class SignUp(BaseModel):
-    username: str
+    First_name: str
+    Last_name: str
+    Phone: str
+    DOB: str
+    email: str
     password: str
+    gender: str
     address: str
-    email: str | None = None
-    full_name: str | None = None
+    Ten_lvl: str
+    PB_lvl: str
+
 
 class Sign_in(BaseModel):
     email: str | None = None
     password: str
 
+'''
 async def sign_in(user: Sign_in):
     try:
         response = supabase.auth.sign_in_with_password({
@@ -78,6 +85,7 @@ async def sign_in(user: Sign_in):
             "code": "01AU"
         }
 
+'''
 
 @app.post("/sign-up")
 async def sign_up(user: SignUp):
@@ -90,13 +98,26 @@ async def sign_up(user: SignUp):
         user_id = response.user.id
         supabase.table("Users").insert({
             "id": user_id,
-            "email": user.email,
-            "full_name": user.full_name,
-            "address": user.address
+            "First_name": user.First_name,
+            "Last_name": user.Last_name,
+            "phone_number": user.Phone,
+            "DOB": user.DOB,
+            "Tennis_Level": user.Ten_lvl,
+            "Pb_level": user.PB_lvl,
+            "gender": user.gender,
+            "address": user.address,
         }).execute()
         return {
             "id": user_id
         }
     except Exception as e:
         return {"error": str(e)}
+
+# Main Function
+def main():
+    uvicorn.run(app, host="0.0.0.0", port=8000)
+
+
+if __name__ == "__main__":
+    main()
 

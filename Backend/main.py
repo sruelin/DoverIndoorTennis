@@ -54,7 +54,9 @@ class Sign_in(BaseModel):
     email: str | None = None
     password: str
 
-'''
+
+
+@app.post("/sign-in")
 async def sign_in(user: Sign_in):
     try:
         response = supabase.auth.sign_in_with_password({
@@ -65,8 +67,10 @@ async def sign_in(user: Sign_in):
         cur_user = response.user
 
         # stick user in cache
+        '''
         cleanToken = cur_session.access_token.strip()
         userCacheLine[cleanToken] = cur_user
+        '''
 
         return {
             "access_token": cur_session.access_token,
@@ -85,7 +89,6 @@ async def sign_in(user: Sign_in):
             "code": "01AU"
         }
 
-'''
 
 @app.post("/sign-up")
 async def sign_up(user: SignUp):
